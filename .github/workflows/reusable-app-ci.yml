@@ -1,0 +1,45 @@
+name: Reusable App CI
+
+on:
+  workflow_call:
+    inputs:
+      service-name:
+        type: string
+        required: true
+      image-name:
+        type: string
+        required: true
+      image-tag:
+        type: string
+        required: true
+      push-image:
+        type: boolean
+        default: false
+      node-version:
+        type: string
+        default: "24"
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: false
+      DOCKERHUB_TOKEN:
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build app
+        uses: ./.github/actions/build-app
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Docker build + push
+        uses: ./.github/actions/docker-build-push
+        with:
+          image-name: ${{ inputs.image-name }}
+          image-tag: ${{ inputs.image-tag }}
+          push: ${{ inputs.push-image }}
+          registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry-password: ${{ secrets.DOCKERHUB_TOKEN }}
