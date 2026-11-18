@@ -18,6 +18,9 @@ on:
       node-version:
         type: string
         default: "24"
+      working-directory:
+        type: string
+        default: "."
     secrets:
       DOCKERHUB_USERNAME:
         required: false
@@ -34,10 +37,12 @@ jobs:
         uses: ./.github/actions/build-app
         with:
           node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.working-directory }}
 
       - name: Docker build + push
         uses: ./.github/actions/docker-build-push
         with:
+          context: ${{ inputs.working-directory }}
           image-name: ${{ inputs.image-name }}
           image-tag: ${{ inputs.image-tag }}
           push: ${{ inputs.push-image }}

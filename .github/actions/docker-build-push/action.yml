@@ -2,6 +2,10 @@ name: "Docker Build and Push"
 description: "Build a docker image and optionally push to Docker Hub"
 
 inputs:
+  context:
+    description: "Docker build context directory"
+    required: false
+    default: "."
   image-name:
     description: "Full image name, e.g. tert62/dsc-api-gateway"
     required: true
@@ -34,7 +38,7 @@ runs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
-        context: .
+        context: ${{ inputs.context }}
         push: ${{ inputs.push }}
         tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
         cache-from: type=gha
