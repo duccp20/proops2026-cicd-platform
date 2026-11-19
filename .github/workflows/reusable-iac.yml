@@ -18,6 +18,24 @@ on:
       aws-region:
         type: string
         default: "us-east-1"
+      prefix:
+        type: string
+        default: "proops"
+      project:
+        type: string
+        default: "training"
+      region-code:
+        type: string
+        default: "use1"
+      purpose:
+        type: string
+        default: "learn"
+      responsible-party:
+        type: string
+        default: "duc_cp"
+      owner:
+        type: string
+        default: "duc_cp"
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -27,6 +45,15 @@ on:
 jobs:
   iac:
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_prefix: ${{ inputs.prefix }}
+      TF_VAR_project: ${{ inputs.project }}
+      TF_VAR_environment: ${{ inputs.environment }}
+      TF_VAR_region: ${{ inputs.aws-region }}
+      TF_VAR_region_code: ${{ inputs.region-code }}
+      TF_VAR_purpose: ${{ inputs.purpose }}
+      TF_VAR_responsible_party: ${{ inputs.responsible-party }}
+      TF_VAR_owner: ${{ inputs.owner }}
     steps:
       - uses: actions/checkout@v4
 
