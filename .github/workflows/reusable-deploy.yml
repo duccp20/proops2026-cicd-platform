@@ -90,3 +90,16 @@ jobs:
 
       - name: Verify
         run: kubectl -n "$ENVIRONMENT" describe pod -l app="$SERVICE_NAME" | grep -E "Image:|Status:"
+
+      - name: Run summary
+        run: |
+          {
+            echo "### Deployed to \`$ENVIRONMENT\`"
+            echo ""
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| Image | \`$IMAGE_NAME:$IMAGE_TAG\` |"
+            echo "| Environment | \`$ENVIRONMENT\` |"
+            echo ""
+            echo "Compare this SHA against the other environments' run summaries to confirm promotion worked."
+          } >> "$GITHUB_STEP_SUMMARY"
