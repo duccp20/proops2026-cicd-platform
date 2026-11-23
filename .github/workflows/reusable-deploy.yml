@@ -37,9 +37,17 @@ jobs:
       - name: Create namespace
         run: kubectl create namespace "$ENVIRONMENT" --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Debug vars
+        run: |
+          printf 'SERVICE_NAME=[%s]\n' "$SERVICE_NAME" | cat -A
+          printf 'ENVIRONMENT=[%s]\n' "$ENVIRONMENT" | cat -A
+          printf 'IMAGE_NAME=[%s]\n' "$IMAGE_NAME" | cat -A
+          printf 'IMAGE_TAG=[%s]\n' "$IMAGE_TAG" | cat -A
+          printf 'IMAGE_TAG length=%s\n' "${#IMAGE_TAG}"
+
       - name: Deploy
         run: |
-          cat <<EOF | kubectl apply -f -
+          cat <<EOF > manifest.yaml
           apiVersion: apps/v1
           kind: Deployment
           metadata:
@@ -83,6 +91,8 @@ jobs:
                       initialDelaySeconds: 5
                       periodSeconds: 10
           EOF
+          sed -n '18p' manifest.yaml | cat -A
+          kubectl apply -f manifest.yaml
 
       - name: Wait for rollout
         run: kubectl -n "$ENVIRONMENT" rollout status deployment/"$SERVICE_NAME" --timeout=120s
